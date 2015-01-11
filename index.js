@@ -15,7 +15,7 @@ function Proxy(options) {
 
   var cache = {};
 
-  fs.mkdirs(cacheDir); 
+  fs.mkdirsSync(cacheDir); 
 
   function createServer() {
     var server = http.createServer(function (req, res) {

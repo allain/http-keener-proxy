@@ -1,6 +1,7 @@
 var assert = require('chai').assert;
 var KeenerProxy = require('..');
 var request = require('request');
+var fs = require('fs-extra');
 
 request.defaults({proxy: 'http://localhost:8080'});
 
@@ -24,8 +25,9 @@ describe('KeenerProxy', function() {
       proxyServer.listen(8080);
     });
 
-    afterEach(function() {
+    afterEach(function(done) {
       proxyServer.close();
+      fs.remove('/tmp/proxy-cache', done); 
     });
 
     it('acts as a proxy', function(done) {
