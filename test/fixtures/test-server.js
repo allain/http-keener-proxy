@@ -19,6 +19,8 @@ function nextTick(fn, that) {
   }).bind(that || this);
 }
 
+app.use(express.static(__dirname));
+
 app.get('/echo', function(req, res) {
   res.send(req.query.input);
 });
@@ -41,4 +43,8 @@ app.get('/random', function(req, res) {
   res.send = nextTick(res.send, res);
 
   res.send(Math.random().toString());
+});
+
+app.get('/time', function(req, res) {
+  res.send('' + Date.now());
 });
