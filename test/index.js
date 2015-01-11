@@ -60,5 +60,29 @@ describe('KeenerProxy', function() {
         }, 2);
       });
     });
+    
+    it('sends the same headers when returning cached pages', function(done) {
+      request({
+        url: 'http://localhost:8081/time',
+        proxy: 'http://localhost:8080'
+      }, function(err, resp, body1) {
+        assert(!err, err);
+        var headers1 = resp.headers;
+
+        setTimeout(function() {
+          request({
+            url: 'http://localhost:8081/time',
+            proxy: 'http://localhost:8080'
+          }, function(err, resp, body2) {
+            assert(!err, err);
+
+            var headers2 = resp.headers;
+
+            assert.deepEqual(headers1, headers2);
+            done();
+          });
+        }, 2);
+      });
+    });
   });
 });

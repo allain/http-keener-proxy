@@ -20,6 +20,8 @@
     "url": "https://github.com/allain/http-keener-proxy/issues"
   },
   "dependencies": {
+    "bluebird": "^2.6.2",
+    "fs-promise": "^0.3.1",
     "http-proxy": "^1.8.1",
     "request": "^2.51.0"
   },

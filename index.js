@@ -15,21 +15,38 @@ function Proxy() {
     var server = http.createServer(function (req, res) {
       var cacheKey = buildCacheKey(req);
 
-
       var cacheFile = '/tmp/' + crypto.createHash('sha256').update(cacheKey).digest('hex');
       var cacheFileHeaders = cacheFile + '.headers';
 
-      if (fs.existsSync(cacheFile)) {
-        fs.createReadStream(cacheFile).pipe(res);
-      } else {
+      fs.exists(cacheFile, function(exists) {
+        if (exists) {
+          serveFromCache();
+        } else {
+          proxyAndCache();
+        }
+      });
+
+      function serveFromCache() {
+        fs.readFile(cacheFileHeaders, function(err, json) {
+          if (json) {
+            var headers = JSON.parse(json);
+            Object.keys(headers).forEach(function(key) {
+              res.setHeader(key, headers[key]);
+            });
+          }
+          fs.createReadStream(cacheFile).pipe(res);
+	});
+      }
+ 
+      function proxyAndCache() {
         var urlParts = url.parse(req.url);
 
         var target = urlParts.protocol + '//' + urlParts.host;
 
         proxy.on('proxyRes', function (proxyRes, req, res) {
-          //console.log(proxyRes);
           proxyRes.pipe(fs.createWriteStream(cacheFile));
-          //console.log('RAW Response from the target', JSON.stringify(proxyRes.headers, true, 2));
+          fs.writeFile(cacheFileHeaders, JSON.stringify(proxyRes.headers), function(err) {
+          });
         });
 
         proxy.web(req, res, { target: target });
