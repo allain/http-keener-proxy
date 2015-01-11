@@ -1,21 +1,28 @@
 var http = require('http');
 var httpProxy = require('http-proxy');
 var url = require('url');
-var fs = require('fs');
+var fs = require('fs-extra');
 var crypto = require('crypto');
 
 module.exports = Proxy;
 
-function Proxy() {
+function Proxy(options) {
+  options = options || {};
+      
+  var cacheDir = options.cacheDir || '/tmp/proxy-cache/';
+
   var proxy = httpProxy.createProxyServer({});
 
   var cache = {};
+
+  fs.mkdirs(cacheDir); 
 
   function createServer() {
     var server = http.createServer(function (req, res) {
       var cacheKey = buildCacheKey(req);
 
-      var cacheFile = '/tmp/' + crypto.createHash('sha256').update(cacheKey).digest('hex');
+
+      var cacheFile = cacheDir + crypto.createHash('sha256').update(cacheKey).digest('hex');
       var cacheFileHeaders = cacheFile + '.headers';
 
       fs.exists(cacheFile, function(exists) {
