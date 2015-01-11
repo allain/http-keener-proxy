@@ -10,20 +10,27 @@
     "type": "git",
     "url": "https://github.com/allain/http-keener-proxy"
   },
-  "keywords": ["http-proxy", "cache"],
+  "keywords": [
+    "http-proxy",
+    "cache"
+  ],
   "author": "Allain Lalonde <allain.lalonde@gmail.com>",
   "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/allain/http-keener-proxy/issues"
   },
-  "dependencies": {},
+  "dependencies": {
+    "request": "^2.51.0"
+  },
   "devDependencies": {
+    "async": "^0.9.0",
     "chai": "~1.8.1",
+    "express": "^4.10.7",
+    "grunt": "~0.4.1",
+    "grunt-cli": "~0.1.9",
+    "grunt-complexity": "~0.1.3",
     "grunt-contrib-jshint": "~0.6.4",
     "grunt-contrib-watch": "~0.5.3",
-    "grunt": "~0.4.1",
-    "grunt-mocha-cli": "~1.1.0",
-    "grunt-complexity": "~0.1.3",
-    "grunt-cli": "~0.1.9"
+    "grunt-mocha-cli": "~1.1.0"
   }
 }

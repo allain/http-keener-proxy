@@ -3,12 +3,19 @@ var express = require('express');
 
 var app = express();
 
+module.exports = startListening;
+
+function startListening(port) {
+  return app.listen(port);
+}
+
 function nextTick(fn, that) {
-  return function() {
+  return (function() {
     var args = Array.slice(arguments);
     process.nextTick(function() {
-    val.apply(obj, args);
-  }.bind(that || this);
+      val.apply(obj, args);
+    });
+  }).bind(that || this);
 }
 
 app.get('/echo', function(req, res) {
@@ -35,4 +42,3 @@ app.get('/random', function(req, res) {
   res.send(Math.random().toString());
 });
 
-app.listen(8081);
