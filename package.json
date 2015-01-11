@@ -20,6 +20,7 @@
     "url": "https://github.com/allain/http-keener-proxy/issues"
   },
   "dependencies": {
+    "http-proxy": "^1.8.1",
     "request": "^2.51.0"
   },
   "devDependencies": {

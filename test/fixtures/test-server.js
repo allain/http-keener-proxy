@@ -11,10 +11,11 @@ function startListening(port) {
 
 function nextTick(fn, that) {
   return (function() {
-    var args = Array.slice(arguments);
+    var args = Array.prototype.slice.call(arguments);
+
     process.nextTick(function() {
-      val.apply(obj, args);
-    });
+      fn.apply(this, args);
+    }.bind(this));
   }).bind(that || this);
 }
 
@@ -41,4 +42,3 @@ app.get('/random', function(req, res) {
 
   res.send(Math.random().toString());
 });
-
