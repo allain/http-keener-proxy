@@ -13,17 +13,13 @@ function Proxy(options) {
 
   var proxy = httpProxy.createProxyServer({});
 
-  var cache = {};
-
   fs.mkdirsSync(cacheDir); 
 
   function createServer() {
     var server = http.createServer(function (req, res) {
       var cacheKey = buildCacheKey(req);
-
-
       var cacheFile = cacheDir + crypto.createHash('sha256').update(cacheKey).digest('hex');
-      var cacheFileHeaders = cacheFile + '.headers';
+      var cacheFileMeta = cacheFile + '.meta';
 
       fs.exists(cacheFile, function(exists) {
         if (exists) {
@@ -34,13 +30,12 @@ function Proxy(options) {
       });
 
       function serveFromCache() {
-        fs.readFile(cacheFileHeaders, function(err, json) {
-          if (json) {
-            var headers = JSON.parse(json);
-            Object.keys(headers).forEach(function(key) {
-              res.setHeader(key, headers[key]);
-            });
-          }
+        fs.readJSON(cacheFileMeta, function(err, meta) {
+          var headers = meta.headers;
+          Object.keys(headers).forEach(function(key) {
+            res.setHeader(key, headers[key]);
+          });
+          
           fs.createReadStream(cacheFile).pipe(res);
 	});
       }
@@ -52,7 +47,8 @@ function Proxy(options) {
 
         proxy.on('proxyRes', function (proxyRes, req, res) {
           proxyRes.pipe(fs.createWriteStream(cacheFile));
-          fs.writeFile(cacheFileHeaders, JSON.stringify(proxyRes.headers), function(err) {
+          fs.outputJSON(cacheFileMeta, {
+            headers: proxyRes.headers
           });
         });
 
