@@ -21,23 +21,21 @@ function Proxy(options) {
       var cacheFile = cacheDir + crypto.createHash('sha256').update(cacheKey).digest('hex');
       var cacheFileMeta = cacheFile + '.meta';
 
-      fs.exists(cacheFile, function(exists) {
-        if (exists) {
-          serveFromCache();
-        } else {
-          proxyAndCache();
-        }
-      });
+      var cached = fs.existsSync(cacheFile);
+      if (cached) {
+        serveFromCache();
+      } else {
+        proxyAndCache();
+      }
 
       function serveFromCache() {
-        fs.readJSON(cacheFileMeta, function(err, meta) {
-          var headers = meta.headers;
-          Object.keys(headers).forEach(function(key) {
-            res.setHeader(key, headers[key]);
-          });
+        var meta = fs.readJSONSync(cacheFileMeta);
+        var headers = meta.headers;
+        Object.keys(headers).forEach(function(key) {
+          res.setHeader(key, headers[key]);
+        });
           
-          fs.createReadStream(cacheFile).pipe(res);
-	});
+        fs.createReadStream(cacheFile).pipe(res);
       }
  
       function proxyAndCache() {
@@ -47,7 +45,7 @@ function Proxy(options) {
 
         proxy.on('proxyRes', function (proxyRes, req, res) {
           proxyRes.pipe(fs.createWriteStream(cacheFile));
-          fs.outputJSON(cacheFileMeta, {
+          fs.outputJSONSync(cacheFileMeta, {
             headers: proxyRes.headers
           });
         });
