@@ -3,6 +3,7 @@ var httpProxy = require('http-proxy');
 var url = require('url');
 var fs = require('fs-extra');
 var crypto = require('crypto');
+var debug = require('debug')('keeper-proxy');;
 
 module.exports = KeenerProxy;
 
@@ -10,7 +11,7 @@ function KeenerProxy(options) {
   options = options || {};
       
   var cacheDir = options.cacheDir || '/tmp/proxy-cache/';
-
+  debug('using cache dir %s', cacheDir);
   var proxy = httpProxy.createProxyServer({});
 
   fs.mkdirsSync(cacheDir); 
@@ -42,6 +43,7 @@ function KeenerProxy(options) {
         var urlParts = url.parse(req.url);
 
         var target = urlParts.protocol + '//' + urlParts.host;
+        debug('proxying to %s', target);
 
         proxy.on('proxyRes', function (proxyRes, req, res) {
           proxyRes.pipe(fs.createWriteStream(cacheFile));
