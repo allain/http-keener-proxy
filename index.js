@@ -4,9 +4,9 @@ var url = require('url');
 var fs = require('fs-extra');
 var crypto = require('crypto');
 
-module.exports = Proxy;
+module.exports = KeenerProxy;
 
-function Proxy(options) {
+function KeenerProxy(options) {
   options = options || {};
       
   var cacheDir = options.cacheDir || '/tmp/proxy-cache/';
@@ -69,4 +69,13 @@ function Proxy(options) {
   return {
     createServer: createServer
   };
+}
+
+if (!module.parent) {
+  var proxy = new KeenerProxy({});
+  var server = proxy.createServer();
+  server.listen(8080, function(err) {
+    if (err) return console.error(err);
+    console.log('Proxy listening on port ' + 8080);
+  });
 }
